@@ -1,0 +1,24 @@
+package packWork;
+
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+public class WriteAnyImage extends Image {
+
+    private String fileExtension;
+
+    public WriteAnyImage(String destinationPath) {
+        setFilePath(destinationPath);
+    }
+
+    // metoda de scriere a unei imaginii
+    public void write(ReadAnyImage image) throws IOException {
+        ImageIO.write(image.getImg(), fileExtension, new File(getFilePath() + "." + fileExtension));
+    }
+
+    public void setFileExtension(String fileExtension) {
+        this.fileExtension = fileExtension;
+    }
+
+}

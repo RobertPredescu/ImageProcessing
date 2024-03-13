@@ -1,0 +1,34 @@
+package packWork;
+
+import java.awt.image.BufferedImage;
+
+public abstract class Image implements ImageInf{
+
+    private String filePath;
+    private BufferedImage img;
+
+    // getter pentru atributul privat filePath; nu poate fi suprascris deoarece este apelat in constructorul claselor care mostenesc Image
+    @Override
+    public final String getFilePath() {
+        return filePath;
+    }
+    
+    // setter pentru atributul privat filePath; nu poate fi suprascris deoarece este apelat in constructorul claselor care mostenesc Image
+    @Override
+    public final void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+    
+    // getter pentru imagine
+    @Override
+    public BufferedImage getImg() {
+        return img;
+    }
+    
+    // setter pentru imagine
+    @Override
+    public void setImg(BufferedImage img) {
+        this.img = img;
+    }
+    
+}

@@ -1,0 +1,12 @@
+package packWork;
+
+public class ReadBMPImage extends ReadAnyImage {
+
+    public ReadBMPImage(String sourcePath) throws IllegalArgumentException {
+        super(sourcePath);
+        if (!sourcePath.endsWith(".bmp")) {
+            throw new IllegalArgumentException("Extensia fisierului de intrare trebuie sa fie BMP");
+        }
+    }
+
+}

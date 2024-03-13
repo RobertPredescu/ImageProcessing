@@ -1,0 +1,123 @@
+package packTest;
+
+
+import packWork.ReadBMPImage;
+import packWork.WriteBMPImage;
+
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class MainRotate {
+
+	private static ReadBMPImage myInitialImage;
+    private static WriteBMPImage myFinalImage;
+
+    // metoda care roteste o imagine cu 90 de grade
+    // aceasta metoda este una low-level, prelucreaza imaginea bit cu bit, la nivel de pixel
+    public static BufferedImage rotate90(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        BufferedImage newImage = new BufferedImage(height, width, img.getType());
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                newImage.setRGB(height - 1 - j, i, img.getRGB(i, j));
+            }
+        }
+        return newImage;
+    }
+
+    
+	public static void main(String[] args) {
+
+        // variabila folosita in continuare pt inregistrarea timpilor de citire, procesare si scriere imagine
+        long startTime;
+        
+        // unghiul de rotire a imaginii este dat de la tastatura
+		Scanner input = new Scanner(System.in);
+        {System.out.print("Enter a number: ");}
+        int num = input.nextInt();
+        input.nextLine();
+        System.out.println("You entered: " + num);
+        
+
+        // instantiere imagine de la adresa curenta
+        //Scanner inputstring = new Scanner(System.in);
+        System.out.print("Enter current path: ");
+        String CurrentPath = input.nextLine();
+        
+        try {
+            myInitialImage = new ReadBMPImage(CurrentPath);
+        } catch (IllegalArgumentException ex) {
+            System.out.println(ex.getMessage());
+            System.exit(0);
+        }
+       
+        // citire imagine
+        try {
+            // se memoreaza momentul de timp imediat anterior citirii
+            startTime = System.nanoTime();
+            myInitialImage.read();
+            // se afiseaza timpul de citire, obtinut prin diferenta de timp dintre momentul de timp actual si startTime
+            System.out.println("Timp citire:    " + (System.nanoTime() - startTime) + " nanosecunde");
+        } catch (IOException ioEx) {
+            System.out.println("Citire imagine nereusita! Verificati daca ati introdus bine locatia imaginii.");
+            System.exit(0);
+        }
+        
+        // procesare imagine
+        // se apeleaza metoda rotate90 pentru rotirea cu 90 de grade a imaginii initiale
+        // se tine cont de faptul ca rotirea cu 180 si 270 de grade inseamna 2, respectiv 3 rotiri succesive cu 90 de grade
+        switch (num) {
+            case 90:
+                // se inregistreaza timpul de procesare, procedand similar inregistrarii timpului de citire
+                startTime = System.nanoTime();
+                myInitialImage.setImg(rotate90(myInitialImage.getImg()));
+                System.out.println("Timp procesare: " + (System.nanoTime() - startTime) + " nanosecunde");
+                break;
+            case 180:
+                // se inregistreaza timpul de procesare, procedand similar inregistrarii timpului de citire
+                startTime = System.nanoTime();
+                myInitialImage.setImg(rotate90(myInitialImage.getImg()));
+                myInitialImage.setImg(rotate90(myInitialImage.getImg()));
+                System.out.println("Timp procesare: " + (System.nanoTime() - startTime) + " nanosecunde");
+                break;
+            case 270:
+                // se inregistreaza timpul de procesare, procedand similar inregistrarii timpului de citire
+                startTime = System.nanoTime();
+                myInitialImage.setImg(rotate90(myInitialImage.getImg()));
+                myInitialImage.setImg(rotate90(myInitialImage.getImg()));
+                myInitialImage.setImg(rotate90(myInitialImage.getImg()));
+                System.out.println("Timp procesare: " + (System.nanoTime() - startTime) + " nanosecunde");
+                break;
+            default:
+                System.out.println("Unghiul introdus nu este corect! Rotirea imaginii se poate face doar cu un unghi de 90, 180 sau 270 grade!");
+        }
+
+        // in functie de unghiul de rotatie punem o alta cale pentru a putea avea toate exemplele in folder in acelasi timp
+        System.out.print("Enter destination path: ");
+        String DestinationPath = input.nextLine();
+        if(num==90)
+        	DestinationPath=DestinationPath+"test90.bmp";
+        	myFinalImage = new WriteBMPImage(DestinationPath);
+        if(num==180)
+        	DestinationPath=DestinationPath+"test180.bmp";
+        	myFinalImage = new WriteBMPImage(DestinationPath);
+        if(num==270)
+        	DestinationPath=DestinationPath+"test270.bmp";
+        	myFinalImage = new WriteBMPImage(DestinationPath);
+        System.out.println("OK");
+     // scriere imagine
+        try {
+            // se inregistreaza timpul de scriere, procedand similar inregistrarii timpului de citire
+            startTime = System.nanoTime();
+            myFinalImage.write(myInitialImage);
+            System.out.println("Timp scriere:   " + (System.nanoTime() - startTime) + " nanosecunde");
+            System.out.print("Imagine rotita si salvata! :)");
+        } catch (IOException ex) {
+            System.out.print("Scriere imagine nereusita!");
+        }
+    }
+
+}
